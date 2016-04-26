@@ -35,7 +35,7 @@ class CDHelper {
     
     //Returns a new URL made by appending a path component to the original URL.
     lazy var localStoreURL: NSURL = {
-        let url = self.storesDirectory.URLByAppendingPathComponent("WhaleTalk.sqlite")
+        let url = self.storesDirectory.URLByAppendingPathComponent("NanChat.sqlite")
         return url
         }()
     

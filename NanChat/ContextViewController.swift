@@ -7,3 +7,9 @@
 //
 
 import Foundation
+import CoreData
+
+protocol ContextViewController {
+    //can be get and set anywher
+    var context: NSManagedObjectContext?{get set}
+}

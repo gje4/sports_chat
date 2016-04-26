@@ -10,15 +10,24 @@ import UIKit
 
 class FavoriteCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    //attribute
+    let phoneTypeLabel = UILabel()
+    
+    //init cell style
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
+        
+        //cell style
+        detailTextLabel?.textColor = UIColor.lightGrayColor()
+        phoneTypeLabel.textColor = UIColor.lightGrayColor()
+        phoneTypeLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(phoneTypeLabel)
+     //contraints
+        phoneTypeLabel.centerYAnchor.constraintEqualToAnchor(contentView.centerYAnchor).active = true
+        phoneTypeLabel.trailingAnchor.constraintEqualToAnchor(contentView.layoutMarginsGuide.trailingAnchor).active = true
+        
     }
-
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-
 }

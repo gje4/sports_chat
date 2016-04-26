@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ChatCell: UITableViewCell {
+class MessageCell: UITableViewCell {
 
     //variables
     let messageLabel: UILabel = UILabel()

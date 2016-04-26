@@ -12,6 +12,8 @@ import CoreData
 
 class Message: NSManagedObject {
 
-// Insert code here to add functionality to your managed object subclass
-
+    var isIncoming: Bool {
+       return sender != nil    }
 }
+
+

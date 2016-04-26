@@ -6,8 +6,5 @@
 //  Copyright © 2016 Nanigans. All rights reserved.
 //
 
-#ifndef FireChat_Swift_Bridging_Header_h
-#define FireChat_Swift_Bridging_Header_h
+#import <Firebase/Firebase.h>
 
-
-#endif /* FireChat_Swift_Bridging_Header_h */

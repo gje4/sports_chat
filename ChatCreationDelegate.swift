@@ -7,3 +7,9 @@
 //
 
 import Foundation
+import CoreData
+
+
+protocol ChatCreationDelegate{
+    func created(chat chat: Chat, incontext context: NSManagedObjectContext)
+}
