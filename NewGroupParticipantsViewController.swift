@@ -66,6 +66,10 @@ class NewGroupParticipantsViewController: UIViewController {
         
         if let context = context {
             let request = NSFetchRequest(entityName: "Contact")
+            //only firebase
+            request.predicate = NSPredicate(format: "storageId != nil")
+            
+
             request.sortDescriptors = [NSSortDescriptor(key: "lastName", ascending: true),
                 NSSortDescriptor(key: "firstName", ascending: true)]
             do {

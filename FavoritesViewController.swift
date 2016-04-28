@@ -32,45 +32,33 @@ class FavoritesViewController: UIViewController, TableViewFetchedResultsDisplaye
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //datasource and data delagate
-        tableView.dataSource = self
-        tableView.delegate = self
         
-        //grab value from contact entity
-        if let context = context{
-            let request = NSFetchRequest(entityName: "Contact")
-            request.sortDescriptors = [NSSortDescriptor(key: "lastName", ascending: true), NSSortDescriptor(key: "firstName", ascending: true)]
-            //add a filter
-            //(current games)
-            //only show registered users
-            request.predicate = NSPredicate(format: "storageId != nil and favorite = true")
-            
-            fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-            fetchedResultsController?.delegate = fetchedResultsDelegate
-            do {
-        try fetchedResultsController?.performFetch()
-    } catch {
-    print("no core data")
-    }
-
-//set up
-    title = "Favorites"
-            //add edit button
-            navigationItem.leftBarButtonItem = editButtonItem()
-            
-            
+        title = "Favorites"
+        
+        navigationItem.leftBarButtonItem = editButtonItem()
+        
         automaticallyAdjustsScrollViewInsets = false
         tableView.registerClass(FavoriteCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.tableFooterView = UIView(frame: CGRectZero)
+        tableView.dataSource = self
+        tableView.delegate = self
         
         fillViewWith(tableView)
         
-        
-    
-    
+        if let context = context {
+            let request = NSFetchRequest(entityName: "Contact")
+            request.predicate = NSPredicate(format: "storageId != nil AND favorite = true")
+            request.sortDescriptors = [NSSortDescriptor(key: "lastName", ascending: true), NSSortDescriptor(key: "firstName", ascending: true)]
+            fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+            fetchedResultsDelegate = TableViewFetchedResultsDelegate(tableView: tableView, displayer: self)
+            fetchedResultsController?.delegate = fetchedResultsDelegate
+            do {
+                try fetchedResultsController?.performFetch()
+            } catch {
+                print("There was a problem fetching.")
+            }
+        }
     }
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

@@ -49,7 +49,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //setup firebase context
         let firebaseContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+        
+        
         firebaseContext.persistentStoreCoordinator = CDHelper.sharedInstance.coordinator
+        
+        
+        //sync themain and background sync and FIREBASE
+        contactsSyncer = Syncer(mainContext: contactsContext, backgroundContext: firebaseContext)
+        
         //variables to use for firebase
         let firebaseStore = FirebaseStore(context: firebaseContext)
         self.firebaseStore = firebaseStore
@@ -67,9 +74,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         contactImporter = ContactImporter(context: contactsContext)
         
 
-        //sync themain and background sync and FIREBASE
-        contactsSyncer = Syncer(mainContext: contactsContext, backgroundContext: firebaseContext)
-        
 
         //tab controller, order matter with thi buttons.
         let tabController = UITabBarController()
@@ -110,11 +114,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.rootViewController = tabController
         } else {
             //login promt
-            let vc = SignUpViewController()
-            vc.remoteStore = firebaseStore
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ViewController") as? LoginViewController
+            
+            vc!.remoteStore = firebaseStore
             //assign so tab can be displayed after sign up
-            vc.rootViewController = tabController
-            vc.contactImporter = contactImporter
+            vc!.rootViewController = tabController
+            vc!.contactImporter = contactImporter
             window?.rootViewController = vc
 
         }
@@ -146,14 +151,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 //    //fake core data
-//    func importContacts(context:NSManagedObjectContext) {
-//        //create a key to store data
-//        let dataSeeded = NSUserDefaults.standardUserDefaults().boolForKey("dataSeeded")
-//        guard !dataSeeded else {return}
-//        //get contact from class
-//        contactImporter?.fetch()
-//        NSUserDefaults.standardUserDefaults().setObject(true, forKey: "dataSeeded")
-// 
-//    }
+    func importContacts(context: NSManagedObjectContext) {
+        let dataSeeded = NSUserDefaults.standardUserDefaults().boolForKey("dataSeeded")
+        guard !dataSeeded else {return}
+        
+        contactImporter?.fetch()
+        
+        NSUserDefaults.standardUserDefaults().setObject(true, forKey: "dataSeeded")
+    }
+
 }
 

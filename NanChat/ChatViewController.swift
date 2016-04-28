@@ -34,6 +34,8 @@ class ChatViewController: UIViewController {
     
     //set up the game
     func setupGame()  {
+//     createHeader()
+        
 
         seconds = 30
         count = 0
@@ -41,17 +43,11 @@ class ChatViewController: UIViewController {
         scoreLabel.text = "Score: \(count)"
 tableView.reloadData()
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("subtractTime"), userInfo: nil, repeats: true)
-
-
-
     }
 
 
     
     
-    // *** STEP 1: STORE FIREBASE REFERENCES
-    var ref = Firebase(url:"https://party-time.firebaseio.com/")
-    // Write data to Firebase
 
 
     //chat view  updated to included timestamp,  grouped allows us to group by date
@@ -67,10 +63,11 @@ tableView.reloadData()
     //from our message class (replaced by dictionary)
 //    private var messages = [Message]()
     //dicationary NSDATE is the key
-    private var sections = [NSDate: [Message]]()
+    private var sections = [cname: [Message]()]
+    private var names = [cname]
     private var dates = [NSDate]()
+
     
-private var names = [cname]
     //nsconctraint to move the chat up when clicked
     private var bottomConstraint: NSLayoutConstraint!
     
@@ -284,7 +281,7 @@ private var names = [cname]
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         var alert = UIAlertController(title: "Celebrity",
-            message: "Get your teammate to guess as many celebrity names with out using the celebrity name in 30 seconds",
+            message: "Get your teammates to guess as many celebrity names with out using the celebrity name in 30 seconds",
             preferredStyle: .Alert)
         self.presentViewController(alert, animated: true, completion:nil)
         
@@ -320,8 +317,12 @@ private var names = [cname]
             let alert = UIAlertController(title: "Time is up!",
                 message: "You scored \(count) points",
                 preferredStyle: UIAlertControllerStyle.Alert)
+           //buttons
             alert.addAction(UIAlertAction(title: "Play Again", style: UIAlertActionStyle.Default, handler: {
+ 
+                
                 action in cname = pickName()
+
                 //remove core data, start fresh
                 self.deleteMessages("Message")
                 
@@ -332,10 +333,17 @@ private var names = [cname]
                 }
                 ))
             
+            //buttons
+            alert.addAction(UIAlertAction(title: "Back to Game", style: UIAlertActionStyle.Default, handler: nil))
+                
             presentViewController(alert, animated: true, completion:nil)
+
+                }
+
+            
         }
-        else { print("try Again")}
-    }
+//        else { print("try Again")}
+    
 
     //function to control keyboard will show,  this will handle moving the shift
     func keyboardWillShow(notification: NSNotification) {
@@ -372,7 +380,6 @@ private var names = [cname]
     func pressedSend(button: UIButton) {
         //make sure there is data
         tableView.dataSource = self
-        
         //        //check to save  message core data
         guard let text = newMessageField.text where text.characters.count > 0 else {return}
         checkTemporaryContect()
@@ -380,6 +387,19 @@ private var names = [cname]
         guard let context = context else {return}
         guard let message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: context) as? Message else {return}
         message.text = text
+        print(message.text = text)
+        
+        if (text.caseInsensitiveCompare(cname) == .OrderedSame) {
+            count++
+            message.score = count
+
+            scoreLabel.text = "Score: \(count)"
+        } else {
+            //            print("wrong answer")
+        }
+        
+   
+
        message.chat = chat
         chat?.lastMessageTime = message.timestamp
 
@@ -388,18 +408,11 @@ private var names = [cname]
 //        message.isIncoming = false
         message.timestamp = NSDate()
         message.celebrityName = cname
+        print(message.celebrityName)
+        message.celebrityName = cname
 
-        
         //add to score
-        
-        
-        if cname == message.text! {
-            count++
-            scoreLabel.text = "Score: \(count)"
-        } else {
-            print("wrong answer")
-        }
-        
+
         
         //check to see if the answer is right, caps do not madder
         if  (text.caseInsensitiveCompare(cname) == .OrderedSame) {
@@ -411,7 +424,7 @@ private var names = [cname]
                 action in cname = pickName()
                 
                 //remove core data, start fresh
-                //                self.deleteMessages("Message")
+                              self.deleteMessages("Message")
                 
                 
                 }
@@ -419,7 +432,7 @@ private var names = [cname]
             
             presentViewController(alert, animated: true, completion:nil)
         }
-        else { print("try Again")}
+//        else { print("try Again")}
         
         
         //        print(message)
@@ -445,27 +458,25 @@ private var names = [cname]
     }
     //adding message to the dictionary using the key message
     func addMessage(message: Message) {
-        guard let date = message.timestamp else {return}
-        let calandar = NSCalendar.currentCalendar()
-        let startDay = calandar.startOfDayForDate(date)
+//        guard let date = message.timestamp else {return}
+//        let calandar = NSCalendar.currentCalendar()
+//        let startDay = calandar.startOfDayForDate(date)
         
         //comversion, key is the date the value is the messages (start date is key)
-        var messages = sections[startDay]
+        var messages = sections[cname]
+        print(messages)
         if messages == nil {
             //group by date (start day is calander)
-            dates.append(startDay)
-            dates = dates.sort({$0.earlierDate($1) == $0})
-            
+//            dates.append(startDay)
+//            dates = dates.sort({$0.earlierDate($1) == $0})
             //change to group by cname (start day is calander)
             names.append(cname)
             messages = [Message]()
         }
         messages!.append(message)
-        
-        
         //        messages!.sortInPlace{$0.timestamp!.earlierDate($1.timestamp!) == $0.timestamp!}
         
-        sections[startDay] = messages
+        sections[cname] = messages
         
         
     }
@@ -522,7 +533,7 @@ private var names = [cname]
     func repickName(button: UIButton) -> String{
         cname = pickName()
         tableView.reloadData()
-        print(cname)
+//        print(cname)
         return cname
         
     }
@@ -551,22 +562,69 @@ private var names = [cname]
             print("miss")
         }
     }
-
-
+//
+//    //header
+//    private func createHeader() -> UIView {
+//        let header = UIView()
+//        
+//        //button
+//        let newGroupButton = UIButton()
+//        newGroupButton.translatesAutoresizingMaskIntoConstraints = false
+//        header.addSubview(newGroupButton)
+//        
+//        //boarder
+//        let border = UIView()
+//        border.translatesAutoresizingMaskIntoConstraints = false
+//        header.addSubview(border)
+//        border.backgroundColor = UIColor.lightGrayColor()
+//        
+//        //button function
+//        newGroupButton.setTitle("Group Game", forState: .Normal)
+//        newGroupButton.setTitleColor(view.tintColor, forState: .Normal)
+//        newGroupButton.addTarget(self, action: "pressedNewGroup", forControlEvents: .TouchUpInside)
+//        
+//        //constraints for the header and the button
+//        let constraints:[NSLayoutConstraint] = [
+//            newGroupButton.heightAnchor.constraintEqualToAnchor(header.heightAnchor),
+//            newGroupButton.trailingAnchor.constraintEqualToAnchor(header.layoutMarginsGuide.trailingAnchor),
+//            //boarder
+//            border.heightAnchor.constraintEqualToConstant(1),
+//            border.leadingAnchor.constraintEqualToAnchor(header.leadingAnchor),
+//            border.trailingAnchor.constraintEqualToAnchor(header.trailingAnchor),
+//            border.bottomAnchor.constraintEqualToAnchor(header.bottomAnchor)
+//        ]
+//        NSLayoutConstraint.activateConstraints(constraints)
+//        
+//        header.setNeedsLayout()
+//        header.layoutIfNeeded()
+//        
+//        let height = header.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height
+//        var frame = header.frame
+//        frame.size.height = height
+//        header.frame = frame
+//        
+//        //get header
+//        return header
+//    }
+//
 
 }
 
 extension ChatViewController: UITableViewDataSource {
     //extention to translate dication to arryso can us in utable view
     func getMessages(section: Int) -> [Message] {
-        let date = dates[section]
-        return sections[date]!
+        let name = names[section]
+        print(sections)
+          print(sections[name])
+        return sections[name]!
 
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         //top private variable (keep track of group dates)
-        return dates.count
+        print(names.count)
+        return names.count
+        
 
     }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -579,7 +637,8 @@ extension ChatViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! MessageCell
         //get message array
         let messages = getMessages(indexPath.section)
-        print(messages)
+        
+//        print(messages)
         let message = messages[indexPath.row]
         cell.messageLabel.text = message.text
         cell.incoming(message.isIncoming)
@@ -591,11 +650,6 @@ extension ChatViewController: UITableViewDataSource {
         return cell
     }
 
-    
-
-    
-    
-    
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
         view.backgroundColor = UIColor.clearColor()
@@ -672,14 +726,14 @@ extension Array {
 
 func pickName() -> String{
     let names = ["Michael Jordan",
-        "Oprah Winfrey",
-        "Leonardo DiCaprio",
+        "Lebron",
+        "Melo",
         "Jerry Seinfeld",
         "Steven Spielberg",
         "Spice Girls",
         "Harrison Ford",
         "Robin Williams",
-        "Céline Dion",
+        "Kobe",
         "The Rolling Stones"
     ]
     let cbname = names.randomItem()

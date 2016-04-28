@@ -37,6 +37,9 @@ class FirebaseStore {
         model.upload(rootRef, context: context)
     }
     
+    private func listenForNewMessages(chat:Chat) {
+        chat.observeMessages(rootRef, context: context)
+    }
 
 
 //get all of the contacts from core data
@@ -71,6 +74,8 @@ private func fetchAppContacts()->[Contact] {
                     try self.context.save()
                 }catch{}
             }
+            self.listenForNewMessages(chat)
+
         })
     }
 }

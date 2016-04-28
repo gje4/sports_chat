@@ -9,6 +9,7 @@
 import CoreData
 import UIKit
 
+
 class NewChatViewController: UIViewController,TableViewFetchedResultsDisplayer {
 
     var context: NSManagedObjectContext?
@@ -46,9 +47,11 @@ class NewChatViewController: UIViewController,TableViewFetchedResultsDisplayer {
         //connect to core data
         if let context = context {
             let request = NSFetchRequest(entityName: "Contact")
+//            request.predicate = NSPredicate(format: "storageId != nil")
+            
             request.sortDescriptors = [NSSortDescriptor(key:"lastName", ascending:true)]
             
-            fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: "sortLetter", cacheName: "NewChatBViewController")
+            fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: "sortLetter", cacheName: "nil")
             
             fetchedResultsDelegate = TableViewFetchedResultsDelegate(tableView: tableView, displayer: self)
             fetchedResultsController?.delegate = fetchedResultsDelegate

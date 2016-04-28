@@ -14,6 +14,9 @@ class Chat: NSManagedObject {
 
 // Insert code here to add functionality to your managed object subclass
 
+    var isGroupChat:Bool {
+        return participants?.count > 1
+    }
     var lastMessage:Message? {
         //get messages
         let request = NSFetchRequest(entityName: "Message")

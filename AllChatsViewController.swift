@@ -116,15 +116,14 @@ class AllChatsViewController: UIViewController,TableViewFetchedResultsDisplayer 
 
         
         guard let chat = fetchedResultsController?.objectAtIndexPath(indexPath) as? Chat else {return}
-
         guard let contact = chat.participants?.anyObject() as? Contact else {return}
-      
-        guard let lastMessage = chat.lastMessage, timestamp = lastMessage.timestamp, text = lastMessage.text else {return}
+        guard let lastMessage = chat.lastMessage, timestamp = lastMessage.timestamp, score = lastMessage.score, text = lastMessage.text else {return}
         
-        let formatter = NSDateFormatter()
-        formatter.dateFormat = "MM/dd/YY"
+        
+//        let formatter = NSDateFormatter()
+//        formatter.dateFormat = "MM/dd/YY"
         cell.nameLabel.text = contact.fullName
-        cell.dateLabel.text = formatter.stringFromDate(timestamp)
+        cell.dateLabel.text = StringLiteralType(score)
         cell.messageLabel.text = text
     }
     

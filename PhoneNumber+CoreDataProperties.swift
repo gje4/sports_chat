@@ -2,7 +2,7 @@
 //  PhoneNumber+CoreDataProperties.swift
 //  NanChat
 //
-//  Created by George Fitzgibbons on 4/22/16.
+//  Created by George Fitzgibbons on 4/26/16.
 //  Copyright © 2016 Nanigans. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
